@@ -41,8 +41,8 @@ let longestPalindrome = function(s) {
  * @return {[type]}   [description]
  */
 var longestPalindrome2 = function(s) {
-    let len = s.length;
-    if (len === 0 || len === 1) {
+    let len = 0;
+    if (s == null || (len = s.length) <= 1) {
         return s;
     }
     let maxStr = s[0];
