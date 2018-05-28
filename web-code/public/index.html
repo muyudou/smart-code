@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>xlf-algorithm</title>
+    <style type="text/css">
+        body {
+            padding: 20px;
+        }
+        .btn {
+            margin: 10px;
+            border: 1px solid blue;
+            border-radius: 10px;
+            line-height: 30px;
+            min-width: 100px;
+            text-indent: center;
+            color: green;
+        }
+        .result {
+            height: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>常见算法</h1>
+    <ul>
+        <li>判断回文子串: alg.isPalindrome:
+            <button class="btn isPalindrome" data-alg="isPalindrome">alg.isPalindrome('ababbb')</button>
+            <div class="result">运行结果：<span></span></div>
+        </li>
+        <li>最长回文子串: alg.longestPalindrome:
+            <button class="btn longestPalindrome" data-alg="longestPalindrome">alg.longestPalindrome('ababbb')</button>
+            <div class="result">运行结果：<span></span></div>
+        </li>
+        <li>最长回文子串: alg.longestPalindrome2:
+            <button class="btn longestPalindrome2" data-alg="longestPalindrome2">alg.longestPalindrome2('ababbb')</button>
+            <div class="result">运行结果：<span></span></div>
+        </li>
+    </ul>
+    <script src="./dist/bundle.js"></script>
+    <script type="text/javascript">
+        document.querySelectorAll('.btn').forEach(item => {
+            item.onclick = function (e) {
+                let elem = e.currentTarget;
+                let algFunc = elem.dataset.alg;
+                let result = alg[algFunc]('ababbb');
+                elem.nextElementSibling.firstElementChild.innerHTML = result;
+            }
+        });
+    </script>
+</body>
+</html>
