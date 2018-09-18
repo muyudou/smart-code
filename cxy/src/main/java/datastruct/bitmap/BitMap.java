@@ -16,9 +16,6 @@ public class BitMap {
 
     private long[] bits;
 
-    // true count
-    private int count = 0;
-
     public BitMap() {
         this(DEFAULT_BIT_NUM);
     }
@@ -46,9 +43,6 @@ public class BitMap {
         if (index >= bits.length) {
             return;
         }
-        if ((bits[index] & (1L << bitIndex)) != 0) {
-            count--;
-        }
         // <<操作只有最后6位有效
         bits[index] &= ~(1L << bitIndex);
     }
@@ -71,17 +65,7 @@ public class BitMap {
     public void set(int bitIndex) {
         int index = wordIndex(bitIndex);
         ensureCapacity(index);
-        if ((bits[index] & (1L << bitIndex)) == 0) {
-            count++;
-            bits[index] |= 1L << bitIndex;
-        }
-    }
-
-    /**
-     * @return 被设置为true的bit个数
-     */
-    public int trueCount() {
-        return count;
+        bits[index] |= 1L << bitIndex;
     }
 
     /**
