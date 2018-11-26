@@ -12,18 +12,16 @@ public class ReverseList {
         }
 
         // 处理过程中的中心节点
-        Node<T> node = head.next;
-        // 置空，要不然会一直指向node
-        head.next = null;
-        Node<T> successor = null;
+        Node<T> node = head;
+        Node<T> prev = null;
 
         while (node != null) {
-            successor = node.next;
-            node.next = head;
-            head = node;
-            node = successor;
+            Node<T> next = node.next;
+            node.next = prev;
+            prev = node;
+            node = next;
         }
-        return head;
+        return prev;
     }
 
     public static void main(String[] args) {
