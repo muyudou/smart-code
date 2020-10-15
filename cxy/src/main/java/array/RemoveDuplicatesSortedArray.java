@@ -1,5 +1,7 @@
 package array;
 
+import java.util.Arrays;
+
 /**
  * 删除有序数组中的重复元素，要求时间复杂度为O(1)
  * 思路1：由于数组是有序的，因此相同的元素是相邻的，因此可以使用两次遍历：
@@ -48,18 +50,25 @@ public class RemoveDuplicatesSortedArray {
         return index + 1;
     }
 
-    public int removeDuplicate2(int[] nums) {
-        if (nums == null || nums.length == 0) {
+    public static int removeDuplicate2(int[] nums) {
+        if (nums == null || nums.length == 1) {
             return 0;
         }
 
         // index下一个有效位置
         int index = 1;
+        int value = nums[0];
         for (int i = 1; i < nums.length; i++) {
-            if (nums[i] != nums[index - 1]) {
-                nums[index++] = nums[i];
+            if (nums[i] != value) {
+                value = nums[index++] = nums[i];
             }
         }
         return index;
+    }
+
+    public static void main(String[] args) {
+        int[] aray = {0,0,1,1,1,2,2,3,3,4};
+        System.out.println(removeDuplicate2(aray));
+        System.out.println(Arrays.toString(aray));
     }
 }
