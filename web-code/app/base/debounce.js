@@ -99,3 +99,72 @@ const throttle = (fn, wait, options = {}) => {
 
 window.onscroll = throttle(() => console.log('scroll'), 1000, {leading: true, trailing: true});
 
+function scroll() {console.log('scroll')};
+ds = debounce(scroll, 1000, true);
+window.onscroll = ds;
+
+const debounce = function (fn, timeout, immediate) {
+    let timer = null;
+    const outerArgs = Array.prototype.slice.call(arguments, 2);
+    return function () {
+        const innerArgs = Array.prototype.slice.call(arguments);
+        const args = innerArgs.concat(outerArgs);
+        if (immediate && !timer) {
+            fn.apply(this, args);
+        }
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+            timer = null;
+        }, timeout);
+    };
+};
+
+function scroll() {console.log('scroll')};
+ds = throttle(scroll, 100);
+window.onscroll = ds;
+
+// 一进来就触发一次，最后没有
+const throttle = function (fn, wait) {
+    let last = 0;
+    return function () {
+        const now = +new Date();
+        if (now - last > wait) {
+            fn.apply(this, arguments);
+            last = now;
+        }
+    }
+};
+
+// 一进来没有触发，最后会再触发一次
+const throttle2 = function (fn, wait) {
+    let timeout;
+    let first = true;
+    return function () {
+        if (timeout) {
+            return;
+        }
+        timeout = setTimeout(() => {
+            fn.apply(this, arguments);
+            timeout = null;
+            first = true;
+        }, wait);
+    }
+}
+
+const throttle3 = function (fn, wait) {
+    let last = 0;
+    let timeout = null;
+    return function () {
+        now = +new Date();
+        if (now - last > wait) {
+            fn.apply(this, arguments);
+            last = now;
+        } else {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => {
+                fn.apply(this, arguments);
+            }, wait);
+        }
+    }
+}

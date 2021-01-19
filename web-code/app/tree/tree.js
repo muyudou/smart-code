@@ -114,3 +114,21 @@ var isValidBST = root => {
     }
     return true;
 }
+
+var maxDepth = root => {
+    if (!root) {
+        return 0;
+    }
+    let leftDepth = 1;
+    let rightDepth = 1;
+    function maxDepthInner(root) {
+        if (root.left) {
+            leftDepth = maxDepth(root.left) + 1;
+        }
+        if (root.right) {
+            rightDepth = maxDepth(root) + 1;
+        }
+        return Math.max(leftDepth, rightDepth);
+    }
+    return maxDepthInner(root);
+};
