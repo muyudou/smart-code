@@ -208,7 +208,7 @@ public class DoubleArrayTrie {
     // of (the list of) the pair(s) of value(s) and length(s)
 
     // set_array omitted
-    // array omitted
+    // datastruct.array omitted
 
     void clear() {
         // if (! no_delete_)

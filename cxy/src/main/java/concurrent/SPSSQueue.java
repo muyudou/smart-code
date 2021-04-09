@@ -22,7 +22,7 @@ import java.util.concurrent.Executors;
  *
  *  在当前的java.util.concurrent包里已经有线程的工具，这里自己实现了一个单线程生产、单线程消费的阻塞队列
  *  仅仅是用来练手，未仔细思考性能，不过正确性是没问题的
- *
+ *  todo: 应该使用disruptor替代
  */
 public class SPSSQueue implements Iterator<String>, AutoCloseable {
 

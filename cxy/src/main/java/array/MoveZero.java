@@ -30,12 +30,14 @@ public class MoveZero {
 
     public static void moveZeros2(int[] nums) {
         int index = 0;
+        // 将非0的数据往前移动
         for (int i = 0; i < nums.length; i++) {
             if (nums[i] != 0) {
                 nums[index++] = nums[i];
             }
         }
 
+        // [0, index)之间都是非0的数，[index, length)是需要补0
         for (int i = index; i < nums.length; i++) {
             nums[i] = 0;
         }
