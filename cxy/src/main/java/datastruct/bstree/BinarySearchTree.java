@@ -26,22 +26,19 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * @return
      */
     public boolean contains(E e) {
-        return e == null ? false : contains(root, e);
-    }
-
-    private boolean contains(BSNode<E> node, E e) {
-        if (node == null) {
-            return false;
+        BSNode<E> node = root;
+        while (node != null) {
+            int c = node.val.compareTo(e);
+            if (c == 0) {
+                return true;
+            } else if (c > 0) {
+                node = node.left;
+            } else {
+                node = node.right;
+            }
         }
 
-        int c = node.val.compareTo(e);
-        if (c == 0) {
-            return true;
-        } else if (c > 0) {
-            return contains(node.left, e);
-        } else {
-            return contains(node.right, e);
-        }
+        return false;
     }
 
     /**
@@ -50,24 +47,36 @@ public class BinarySearchTree<E extends Comparable<E>> {
      */
     public void insert(E e) {
         Objects.requireNonNull(e, "BinarySearchTree doest not allowed null value.");
-        root = insert(root, e);
-    }
-
-    private BSNode<E> insert(BSNode<E> node, E e) {
-        if (node == null) {
+        if (root == null) {
+            root = new BSNode<>(e);
             size++;
-            return new BSNode<>(e);
+            return;
         }
 
-        int c = node.val.compareTo(e);
-        if (c == 0) {
-            node.val = e;
-        } else if (c > 0) {
-            node.left = insert(node.left, e);
-        } else {
-            node.right = insert(node.right, e);
+        BSNode<E> node = root;
+        BSNode<E> parent = null;
+        int c = 0;
+        while (node != null) {
+            c = node.val.compareTo(e);
+            if (c == 0) {
+                node.val = e;
+                return;
+            } else if (c > 0) {
+                parent = node;
+                node = node.left;
+            } else {
+                parent = node;
+                node = node.right;
+            }
         }
-        return node;
+
+        node = new BSNode<>(e);
+        if (c < 0) {
+            parent.right = node;
+        } else {
+            parent.left = node;
+        }
+        size++;
     }
 
 
@@ -89,10 +98,11 @@ public class BinarySearchTree<E extends Comparable<E>> {
         if (c == 0) {
             E old = node.val;
             // 使用左子树的最大节点或者右子树的最小节点来代替
-            boolean left = (node.left != null && node.right != null && (System.currentTimeMillis() & 1) == 0);
+            // 使用一种简单的方式来随机的决定是删除左子树还是右子树
+            boolean right = (node.left != null && node.right != null && (System.currentTimeMillis() & 1) == 0);
             if (node.isLeaf()) {
                 deleter.accept(parent);
-            } else if (node.left == null || left) {
+            } else if (node.left == null || right) {
                 node.val = removeMin(node.right, node, deleteRight);
             } else {
                 node.val = removeMax(node.left, node, deleteLeft);
