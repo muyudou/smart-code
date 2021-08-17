@@ -1,4 +1,4 @@
-package tree;
+package binarytree;
 
 /**
  * 给定一个有序数组，将它转成二叉平衡搜索树

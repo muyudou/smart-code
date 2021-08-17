@@ -26,29 +26,67 @@ public class BinarySearchTree<E extends Comparable<E>> {
      * @return
      */
     public boolean contains(E e) {
+        return search(e) != null;
+    }
+
+    public E search(E e) {
+        BSNode<E> node = internalSearch(e);
+        return node == null ? null : node.val;
+    }
+
+    private BSNode<E> internalSearch(E e) {
         BSNode<E> node = root;
         while (node != null) {
             int c = node.val.compareTo(e);
             if (c == 0) {
-                return true;
+                return null;
             } else if (c > 0) {
                 node = node.left;
             } else {
                 node = node.right;
             }
         }
-
-        return false;
+        return null;
     }
 
+    public E max() {
+        BSNode<E> node = root;
+        while (node != null && node.right != null) {
+            node = node.right;
+        }
+        return node == null ? null : node.val;
+    }
+
+    public E min() {
+        BSNode<E> node = root;
+        while (node != null && node.left != null) {
+            node = node.left;
+        }
+        return node == null ? null : node.val;
+    }
+
+    private BSNode<E> successor(E e) {
+        BSNode<E> node = internalSearch(e);
+        if (node == null) {
+            return null;
+        }
+
+        if (node.right != null) {
+            return node.right;
+        }
+        return null;
+    }
+
+
+
     /**
-     *
+     * 插入元素e
      * @param e
      */
     public void insert(E e) {
         Objects.requireNonNull(e, "BinarySearchTree doest not allowed null value.");
         if (root == null) {
-            root = new BSNode<>(e);
+            root = new BSNode<>(e, null);
             size++;
             return;
         }
@@ -70,7 +108,7 @@ public class BinarySearchTree<E extends Comparable<E>> {
             }
         }
 
-        node = new BSNode<>(e);
+        node = new BSNode<>(e, parent);
         if (c < 0) {
             parent.right = node;
         } else {
