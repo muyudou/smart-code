@@ -1,5 +1,7 @@
 package datastruct.bitmap;
 
+import util.BitsUtil;
+
 import java.util.Arrays;
 
 import static java.lang.Integer.min;
@@ -101,13 +103,7 @@ public class BitMap {
 
 
     private static int power(int value) {
-        int n = value - 1;
-        n |= n >> 1;
-        n |= n >> 2;
-        n |= n >> 4;
-        n |= n >> 8;
-        n |= n >> 16;
-        return n + 1;
+        return BitsUtil.upper2N(value);
     }
 
     public static void main(String[] args) {

@@ -17,13 +17,13 @@ public class SortedUniqArray<E extends Comparable<E>> extends Array<E> {
      */
     @Override
     public E insert(E e) {
-        checkState(size < capacity, "datastruct.array is full, cannot insert any more element.");
-        FindIndex index = binarySearch(e);
-        if (index.isFind) {
+        Index index = binarySearch(e);
+        if (index.isExist()) {
             E old = (E) data[index.idx];
             data[index.idx] = e;
             return old;
         } else {
+            checkState(size < capacity, "datastruct.array is full, cannot insert any more element.");
             insertAt(index.idx, e);
             return null;
         }
@@ -48,15 +48,14 @@ public class SortedUniqArray<E extends Comparable<E>> extends Array<E> {
      * @param e
      * @return 如果找到了返回的就是e所在的下标；如果没找到返回的是第一个大于e元素的下标，也就是e应该插入的位置
      */
-    public FindIndex binarySearch(E e) {
+    public Index binarySearch(E e) {
         int left = 0;
         int right = size - 1;
-        boolean isFind = false;
         while (left <= right) {
             int mid = (left + right) / 2;
             int c = e.compareTo((E) data[mid]);
             if (c == 0) {
-                return new FindIndex(mid, true);
+                return Index.exist(mid);
             } else if (c < 0){
                 right = mid - 1;
             } else {
@@ -64,6 +63,6 @@ public class SortedUniqArray<E extends Comparable<E>> extends Array<E> {
             }
         }
 
-        return new FindIndex(left, isFind);
+        return Index.not(left);
     }
 }
