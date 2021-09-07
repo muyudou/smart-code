@@ -110,6 +110,14 @@ public class Array<E> implements Iterable<E> {
         return old;
     }
 
+    public E removeLast() {
+        return removeByIndex(size - 1);
+    }
+
+    public E removeFirst() {
+        return removeByIndex(0);
+    }
+
     public E remove(E e) {
         if (e == null) {
             for (int i = 0; i < size; i++) {

@@ -3,6 +3,7 @@ package datastruct.btree;
 import datastruct.array.Array;
 import datastruct.array.Index;
 import datastruct.array.SortedUniqArray;
+import util.Tuple;
 
 public class Page<K extends Comparable<K>>  {
   private int t;
@@ -17,19 +18,24 @@ public class Page<K extends Comparable<K>>  {
     keys = new SortedUniqArray<>(m - 1);
   }
 
+  public K minKey() {
+    return keys.first();
+  }
+
+  public K maxKey() {
+    return keys.last();
+  }
+
   public K get(int index) {
     return keys.get(index);
   }
 
-  public K update(int index, K key) {
-    K old = keys.get(index);
-    keys.set(index, key);
-    return old;
+  public Page<K> minChild() {
+    return children == null ? null : children.first();
   }
 
-  public K addAsLeaf(K key) {
-    keys.insert(key);
-    return key;
+  public Page<K> maxChild() {
+    return children == null ? null : children.last();
   }
 
   public Page<K> getChild(int index) {
@@ -48,8 +54,30 @@ public class Page<K extends Comparable<K>>  {
     return keys.size();
   }
 
-  /********************** 插入部分 *******************/
+  /********************** 修改部分 *******************/
+  /**
+   * 只更新 key 的值
+   */
+  public K update(int index, K key) {
+    K old = keys.get(index);
+    keys.set(index, key);
+    return old;
+  }
 
+  /** 针对叶子节点的增删操作 */
+  public K addAsLeaf(K key) {
+    keys.insert(key);
+    return key;
+  }
+
+  public K removeAsLeaf(K key) {
+    return keys.remove(key);
+  }
+
+  /**
+   * 只有分裂 root 时才会被调用
+   * @param child
+   */
   public void addChild(Page<K> child) {
     if (this.children == null) {
       this.children = new Array<>(m);
@@ -68,6 +96,11 @@ public class Page<K extends Comparable<K>>  {
     children.insertAt(index+1, child);
   }
 
+  public Tuple<K, Page<K>> remove(int index) {
+    K key = keys.removeByIndex(index);
+    Page<K> child = children == null ? null : children.removeByIndex(index+1);
+    return Tuple.of(key, child);
+  }
 
   /**
    * 查找指定的 key
@@ -107,6 +140,73 @@ public class Page<K extends Comparable<K>>  {
     left.keys.truncate(t-1);
 
     parent.insertAt(middle, indexAtParent, right);
+  }
+
+  public void merge(K middle, Page<K> right) {
+    keys.insert(middle);
+    right.keys.forEach(keys::insert);
+    if (right.children != null) {
+      right.children.forEach(this.children::insert);
+    }
+  }
+
+  /**
+   * 1. 如果子的左兄弟节点或者右兄弟节点至少有一个有 t 个元素，则从中借一个，以左兄弟为例：
+   *  1. 将左兄弟节点的最大值上提值parent
+   *  2. 将parent节点对应的关键字下降值 this
+   *  3. 将左兄弟节点的最大child 作为 this 最小的child
+   * 2. 如果都只有 t-1 个元素，则合并
+   *
+   * @param parent
+   * @param index 自己作为子节点在parent.children中的下标
+   * @return
+   */
+  public Page<K> borrowOrMergeFromSibling(Page<K> parent, int index) {
+    // 1. 尝试从左兄弟借一个元素
+    Page<K> left = null;
+    if (index > 0 && (left = parent.children.get(index-1)).size() >= t) {
+      K first = parent.get(index-1);
+      K promot = left.keys.removeLast();
+      parent.update(index-1, promot);
+      this.keys.insertAt(0, first);
+      // 同一层级，chilren如果不为空则都不为空
+      if (this.children != null) {
+        this.children.insertAt(0, left.children.removeLast());
+      }
+      return this;
+    }
+
+    // 2. 尝试从右兄弟借一个元素
+    Page<K> right = null;
+    if (index < parent.children.size() - 1 && (right = parent.children.get(index+1)).size() >= t) {
+      K last = parent.get(index);
+      K promot = right.keys.removeFirst();
+      parent.update(index, promot);
+      this.keys.insert(last);
+      if (this.children != null) {
+        this.children.insert(right.children.removeFirst());
+      }
+      return this;
+    }
+
+    // 3. 尝试与左兄弟合并, left, parent中下放一个, this
+    if (left != null) {
+      K middle = parent.keys.removeByIndex(index-1);
+      // this 从 middle 的右节点删除
+      parent.children.removeByIndex(index);
+      left.merge(middle, this);
+      return left;
+    }
+
+    if (right != null) {
+      K middle = parent.keys.removeByIndex(index);
+      parent.children.removeByIndex(index);
+      this.merge(middle, right);
+      // 替换一下
+      parent.children.set(index, this);
+      return this;
+    }
+    throw new RuntimeException("Something error.");
   }
 
   @Override
