@@ -59,4 +59,13 @@ public class AStack<E> implements Stack<E>, Serializable {
     public int size() {
         return sp;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = sp; i > 0; i--) {
+            sb.append(data[i - 1]).append(",");
+        }
+        return sb.append("]").toString();
+    }
 }
