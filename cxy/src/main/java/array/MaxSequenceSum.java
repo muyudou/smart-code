@@ -15,11 +15,6 @@ package array;
  * 链接：https://leetcode-cn.com/problems/maximum-subarray
  */
 public class MaxSequenceSum {
-    ThreadLocal<Integer> x = new ThreadLocal<>();
-    {
-        x.get();
-        x.set(1);
-    }
     public static int maxSubArray(int[] nums) {
         int max = Integer.MIN_VALUE;
         int preMax = 0;
@@ -38,5 +33,6 @@ public class MaxSequenceSum {
     public static void main(String[] args) {
         System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
         System.out.println(maxSubArray(new int[]{4,-1,2,1,-1,3}));
+        System.out.println(maxSubArray(new int[]{-1, -2, -3, -4, -5}));
     }
 }
